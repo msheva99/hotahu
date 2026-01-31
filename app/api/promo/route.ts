@@ -12,14 +12,13 @@ export async function GET(req: NextRequest) {
     const quotaKey = 'kuota_hotahu';
     
     // 1. Ambil IP Address user untuk deteksi duplikasi
-    // Mengambil dari header 'x-forwarded-for' (untuk Vercel) atau fallback ke IP standar
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
     const claimKey = `user_claimed_hotahu:${ip}`;
 
     // 2. Cek apakah IP ini sudah pernah klaim sebelumnya
     const hasClaimed = await redis.get(claimKey);
     
-    // Ambil sisa kuota terbaru
+    // Ambil sisa kuota terbaru dari database
     let remaining = await redis.get<number>(quotaKey);
 
     // Inisialisasi kuota jika key belum ada di Redis
@@ -28,7 +27,7 @@ export async function GET(req: NextRequest) {
       remaining = 20;
     }
 
-    // Jika sudah pernah klaim, beri tahu frontend (status: 'already')
+    // Jika user sudah pernah klaim (IP terdaftar), jangan kurangi kuota lagi
     if (hasClaimed) {
       return NextResponse.json({
         success: false,
@@ -37,13 +36,16 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 3. Cek apakah kuota masih tersedia (> 0)
+    // 3. Logika pengurangan jika kuota masih tersedia
     if (remaining > 0) {
-      // --- LOGIKA PENGURANGAN OTOMATIS ---
-      // Aktifkan baris di bawah ini jika ingin kuota langsung berkurang saat halaman dibuka
-      // await redis.decr(quotaKey); 
-      // await redis.set(claimKey, "true", { ex: 86400 }); // Catat IP selama 24 jam
-      // remaining = remaining - 1; 
+      // MENGURANGI KUOTA: Perintah ini memotong angka di Upstash (misal 20 -> 19)
+      await redis.decr(quotaKey); 
+      
+      // MENANDAI IP: Mencatat bahwa IP ini sudah mengambil jatah (berlaku 24 jam)
+      await redis.set(claimKey, "true", { ex: 86400 }); 
+
+      // Update variabel untuk dikirim ke tampilan HP user
+      remaining = remaining - 1; 
 
       return NextResponse.json({
         success: true,
@@ -51,7 +53,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Jika kuota sudah 0
+    // Jika kuota sudah menyentuh angka 0
     return NextResponse.json({
       success: false,
       already: false,
