@@ -33,13 +33,14 @@ export default function PromoKuchKuch() {
     <div className="relative min-h-[100dvh] w-full flex items-center justify-center p-4 font-sans text-[#1a1a1a] overflow-hidden">
       <div className="fixed inset-0 -z-10 w-full h-full">
         <Image 
-          src="/images/tampilan_diskon.png" 
+          src="/images/tampilan_diskonn.png" 
           alt="Background" 
           fill 
           priority 
           className="object-cover object-center" 
         />
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+        {/* Blur dihapus, hanya menggunakan overlay gelap agar teks terbaca */}
+        <div className="absolute inset-0 bg-black/30"></div>
       </div>
       
       <div className="relative z-10 w-full flex justify-center scale-[0.9] xs:scale-95 sm:scale-100 transition-transform">
@@ -50,7 +51,7 @@ export default function PromoKuchKuch() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center text-red-600 font-bold text-sm">
+      <div className="min-h-screen bg-white flex items-center justify-center text-yellow-500 font-bold text-sm">
         Memuat Penawaran Spesial...
       </div>
     );
@@ -59,10 +60,11 @@ export default function PromoKuchKuch() {
   if (status === 'success' || status === 'already') {
     return (
       <BackgroundWrapper>
-        <div className="w-full max-w-[320px] bg-white rounded-[2.5rem] shadow-2xl text-center p-6 border-4 border-yellow-400 animate-in fade-in zoom-in duration-500">
+        {/* Border diganti Merah */}
+        <div className="w-full max-w-[320px] bg-white rounded-[2.5rem] shadow-2xl text-center p-6 border-4 border-red-600 animate-in fade-in zoom-in duration-500">
           
-          {/* Logo Kuch-Kuch */}
-          <div className="relative w-20 h-16 mx-auto mb-2">
+          {/* Logo Kuch-Kuch (Diperbesar dari w-20 h-16 ke w-28 h-20) */}
+          <div className="relative w-28 h-20 mx-auto mb-2">
             <Image 
               src="/images/logo.png" 
               alt="Kuch-Kuch Hotahu" 
@@ -72,7 +74,8 @@ export default function PromoKuchKuch() {
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-[14px] font-black text-red-600 tracking-tight uppercase leading-none">
+            {/* SELAMAT! Diperbesar (text-2xl) tapi tetap di bawah 4xl (Diskon) */}
+            <h2 className="text-2xl font-black text-yellow-500 tracking-tight uppercase leading-none">
               SELAMAT!
             </h2>
             <p className="text-[11px] font-bold text-gray-700 uppercase">
@@ -81,16 +84,19 @@ export default function PromoKuchKuch() {
           </div>
 
           <div className="my-4">
-            <h1 className="text-4xl font-black text-red-600 leading-tight">
+            {/* Warna diganti Kuning */}
+            <h1 className="text-4xl font-black text-yellow-500 leading-tight">
               DISKON 15%
             </h1>
-            <p className="text-[12px] font-black text-gray-900 uppercase tracking-tighter">
-              UNTUK SEMUA MENU<br/>KUCH KUCH HOTAHU
+            {/* Dijadikan 1 baris */}
+            <p className="text-[11px] font-black text-gray-900 uppercase tracking-tighter whitespace-nowrap">
+              UNTUK SEMUA MENU KUCH KUCH HOTAHU
             </p>
           </div>
 
-          <div className="bg-yellow-100 py-1 px-3 rounded-full inline-block mb-4">
-            <p className="text-[9px] font-bold text-yellow-800">
+          {/* BG diganti Merah muda/light */}
+          <div className="bg-red-50 py-1 px-3 rounded-full inline-block mb-4">
+            <p className="text-[9px] font-bold text-red-600">
               *Minimal pembelian Rp30.000
             </p>
           </div>
@@ -104,9 +110,9 @@ export default function PromoKuchKuch() {
               href="https://maps.google.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border-2 border-red-50 bg-white rounded-2xl px-3 py-2 w-full shadow-sm hover:border-red-200 transition-all text-left"
+              className="inline-flex items-center gap-2 border-2 border-yellow-50 bg-white rounded-2xl px-3 py-2 w-full shadow-sm hover:border-yellow-200 transition-all text-left"
             >
-              <span className="text-red-500 text-xl">📍</span>
+              <span className="text-yellow-500 text-xl">📍</span>
               <div>
                 <p className="text-[10px] font-black text-gray-800 leading-none">Datang ke Outlet Kuch-Kuch</p>
                 <p className="text-[8px] text-gray-500 font-medium">Cek lokasi terdekatmu di sini</p>
@@ -114,8 +120,8 @@ export default function PromoKuchKuch() {
             </a>
           </div>
 
-          {/* Kuota */}
-          <div className="bg-red-600 rounded-2xl py-3 mb-4 text-white">
+          {/* Kuota - Warna diganti Kuning, Teks diganti Merah */}
+          <div className="bg-yellow-400 rounded-2xl py-3 mb-4 text-red-700">
             <div className="flex justify-center items-baseline gap-1.5">
               <span className="text-3xl font-black tabular-nums">
                 {String(remaining).padStart(2, '0')}
@@ -127,12 +133,12 @@ export default function PromoKuchKuch() {
             </p>
           </div>
 
-          {/* Instruksi */}
-          <div className="bg-yellow-400 rounded-xl p-3 text-red-700 shadow-md">
+          {/* Instruksi - Warna diganti Merah, Teks diganti Putih/Kuning */}
+          <div className="bg-red-600 rounded-xl p-3 text-white shadow-md">
             <p className="font-black text-[10px] leading-tight uppercase">
               Tunjukkan halaman ini ke kasir<br/>dan nikmati diskonnya sekarang!
             </p>
-            <div className="mt-2 flex items-center justify-center gap-1.5 border-t border-red-700/10 pt-1.5 text-[8px] font-black animate-pulse">
+            <div className="mt-2 flex items-center justify-center gap-1.5 border-t border-white/20 pt-1.5 text-[8px] font-black animate-pulse text-yellow-300">
               📸 JANGAN LUPA SCREENSHOT
             </div>
           </div>
