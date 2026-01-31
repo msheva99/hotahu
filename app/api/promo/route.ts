@@ -1,7 +1,6 @@
 import { Redis } from '@upstash/redis';
 import { NextResponse, NextRequest } from 'next/server';
 
-// Inisialisasi Redis Upstash
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
@@ -10,50 +9,46 @@ const redis = new Redis({
 export async function GET(req: NextRequest) {
   try {
     const quotaKey = 'kuota_hotahu';
-    
-    // 1. Ambil IP Address user untuk deteksi duplikasi
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
     const claimKey = `user_claimed_hotahu:${ip}`;
 
-    // 2. Cek apakah IP ini sudah pernah klaim sebelumnya
-    const hasClaimed = await redis.get(claimKey);
-    
-    // Ambil sisa kuota terbaru dari database
-    let remaining = await redis.get<number>(quotaKey);
+    // 1. Ambil data sisa kuota & status klaim IP secara bersamaan
+    const [remaining, hasClaimed] = await Promise.all([
+      redis.get<number>(quotaKey),
+      redis.get(claimKey)
+    ]);
 
-    // Inisialisasi kuota jika key belum ada di Redis
-    if (remaining === null) {
+    let currentQuota = remaining;
+
+    // Inisialisasi jika database kosong
+    if (currentQuota === null) {
       await redis.set(quotaKey, 20);
-      remaining = 20;
+      currentQuota = 20;
     }
 
-    // Jika user sudah pernah klaim (IP terdaftar), jangan kurangi kuota lagi
+    // 2. CEK APAKAH SUDAH PERNAH KLAIM (Kunci utama agar refresh terdeteksi)
     if (hasClaimed) {
       return NextResponse.json({
         success: false,
         already: true,
-        remaining: remaining
+        remaining: currentQuota
       });
     }
 
-    // 3. Logika pengurangan jika kuota masih tersedia
-    if (remaining > 0) {
-      // MENGURANGI KUOTA: Perintah ini memotong angka di Upstash (misal 20 -> 19)
+    // 3. JIKA BELUM KLAIM & KUOTA MASIH ADA
+    if (currentQuota > 0) {
+      // Kurangi kuota di Redis
       await redis.decr(quotaKey); 
-      
-      // MENANDAI IP: Mencatat bahwa IP ini sudah mengambil jatah (berlaku 24 jam)
+      // Kunci IP ini agar saat refresh statusnya jadi 'already'
       await redis.set(claimKey, "true", { ex: 86400 }); 
-
-      // Update variabel untuk dikirim ke tampilan HP user
-      remaining = remaining - 1; 
 
       return NextResponse.json({
         success: true,
-        remaining: remaining
+        remaining: currentQuota - 1
       });
     }
 
-    // Jika kuota sudah menyentuh angka 0
+    // 4. JIKA KUOTA HABIS
     return NextResponse.json({
       success: false,
       already: false,
@@ -61,7 +56,6 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("Redis Error:", error);
     return NextResponse.json({ success: false, remaining: 0 }, { status: 500 });
   }
 }
