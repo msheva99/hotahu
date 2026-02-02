@@ -56,11 +56,11 @@ export default function PromoKuchKuch() {
   if (status === 'success' || status === 'already') {
     return (
       <BackgroundWrapper>
-        {/* Border dihapus, diganti dengan shadow-red-600/20 untuk efek glow halus */}
-        <div className="w-full max-w-[320px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(220,38,38,0.3)] text-center p-6 animate-in fade-in zoom-in duration-500">
+        {/* p-6 diubah jadi pt-2 untuk menaikkan isi konten ke atas kotak */}
+        <div className="w-full max-w-[320px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(220,38,38,0.3)] text-center p-6 pt-7 animate-in fade-in zoom-in duration-500">
           
-          {/* Logo */}
-          <div className="relative w-32 h-24 mx-auto -mt-2 mb-0">
+          {/* Logo dengan negative margin agar lebih naik */}
+          <div className="relative w-28 h-14 mx-auto -mt-6 mb-0">
             <Image 
               src="/images/logo.png" 
               alt="Kuch-Kuch Hotahu" 
@@ -69,16 +69,16 @@ export default function PromoKuchKuch() {
             />
           </div>
 
-          <div className="space-y-0.5">
-            <h2 className="text-3xl font-black text-red-600 tracking-tighter uppercase leading-none">
+          <div className="space-y-0">
+            <h2 className="text-4xl font-black text-red-600 tracking-tighter uppercase leading-none">
               SELAMAT!
             </h2>
-            <p className="text-[12px] font-bold text-gray-700 uppercase">
+            <p className="text-[12px] font-bold text-gray-700 uppercase leading-tight">
               Kamu mendapatkan
             </p>
           </div>
 
-          <div className="my-3">
+          <div className="my-2">
             <h1 className="text-4xl font-black text-red-500 leading-none tracking-tighter">
               DISKON 15%
             </h1>
@@ -94,23 +94,25 @@ export default function PromoKuchKuch() {
           </div>
 
           {/* Lokasi Outlet */}
-          <div className="mb-3">
-            <a 
-              href="https://maps.google.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border-2 border-yellow-100 bg-white rounded-2xl px-3 py-2 w-full shadow-sm hover:border-yellow-400 transition-all text-left"
-            >
-              <span className="text-xl">📍</span>
-              <div>
-                <p className="text-[11px] font-black text-gray-800 leading-none">Datang ke Outlet Kuch-Kuch</p>
-                <p className="text-[9px] text-gray-500 font-medium">Cek lokasi terdekatmu di sini</p>
-              </div>
-            </a>
-          </div>
+<div className="mb-2"> {/* Margin bawah dikurangi dari mb-3 ke mb-2 */}
+  <a 
+    href="https://maps.google.com" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    // py-2 diubah menjadi py-1.5 untuk menipiskan strip
+    className="inline-flex items-center gap-2 border-2 border-yellow-100 bg-white rounded-2xl px-3 py-1.5 w-full shadow-sm hover:border-yellow-400 transition-all text-left"
+  >
+    {/* Ukuran ikon disesuaikan */}
+    <span className="text-lg">📍</span> 
+    <div>
+      <p className="text-[10px] font-black text-gray-800 leading-none">Datang ke Outlet Kuch-Kuch</p>
+      <p className="text-[8px] text-gray-500 font-medium">Cek lokasi terdekatmu di sini</p>
+    </div>
+  </a>
+</div>
 
           {/* Kuota */}
-          <div className="bg-yellow-400 rounded-2xl py-2.5 mb-3 text-red-700 shadow-inner">
+          <div className="bg-yellow-400 rounded-2xl py-2.5 mb-3 text-black-700 shadow-inner">
             <div className="flex justify-center items-baseline gap-1">
               <span className="text-4xl font-black tabular-nums leading-none">
                 {String(remaining).padStart(2, '0')}
@@ -127,7 +129,7 @@ export default function PromoKuchKuch() {
             <p className="font-black text-[11px] leading-tight uppercase">
               Tunjukkan halaman ini ke kasir<br/>dan nikmati diskonnya sekarang!
             </p>
-            <div className="mt-2 flex items-center justify-center gap-1.5 border-t border-white/20 pt-1.5 text-[9px] font-black animate-pulse text-yellow-300">
+            <div className="mt-2 flex items-center justify-center gap-1.5 border-t border-white/20 pt-1.5 text-[9px] font-black animate-pulse text-white-300">
               📸 JANGAN LUPA SCREENSHOT
             </div>
           </div>
